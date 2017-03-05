@@ -20,7 +20,7 @@ type Job struct {
 
 type alert interface {
 	SendSuccess(string) error
-	SendFailure(string) error
+	SendFailure(string, string) error
 }
 
 // SlackAlert sends alerts via the slack api
@@ -72,11 +72,20 @@ func (s *SlackAlert) sendMessage(message string) error {
 
 // SendSuccess lets slack know of a success
 func (s *SlackAlert) SendSuccess(serviceName string) error {
+	message := fmt.Sprintf("Service: %v is up and running!", serviceName)
+
+	if err := s.sendMessage(message); err != nil {
+		return err
+	}
 	return nil
 }
 
 // SendFailure lets slack know of a failure
-func (s *SlackAlert) SendFailure(seviceName string, failureReasion string) error {
+func (s *SlackAlert) SendFailure(serviceName string, failureReason string) error {
+	message := fmt.Sprintf("Service: %v is down! Error Message: %v", serviceName, failureReason)
+	if err := s.sendMessage(message); err != nil {
+		return err
+	}
 	return nil
 }
 
