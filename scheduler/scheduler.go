@@ -2,8 +2,10 @@ package scheduler
 
 import (
 	"fmt"
-	"github.com/nlopes/slack"
 	"net/url"
+
+	"github.com/nlopes/slack"
+	"github.com/sfreiberg/gotwilio"
 )
 
 // Scheduler cycles through a job list and excutes them async
@@ -85,9 +87,22 @@ func (s *SlackAlert) SendFailure(serviceName string, failureReason string) error
 
 // TwilioAlert sends alerts via the twilio api
 type TwilioAlert struct {
-	sid     string
+	sender  string
 	numbers []string
-	apiKey  string
+	twilio  *gotwilio.Twilio
+}
+
+// NewTwilioAlert create a TwilioAlert struct with the proper fields
+func NewTwilioAlert(sid string, sender string, numbers []string, apikey string) *TwilioAlert {
+	api := gotwilio.NewTwilioClient(sid, apikey)
+
+	twilioAlert := &TwilioAlert{
+		sender:  sender,
+		numbers: numbers,
+		twilio:  api,
+	}
+
+	return twilioAlert
 }
 
 // SendSuccess lets twilio know of a success
