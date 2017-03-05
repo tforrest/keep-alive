@@ -48,19 +48,20 @@ func NewSlackAlert(users []string, channels []string, apikey string) (*SlackAler
 	return slackAlert, nil
 }
 
-func (s *SlackAlert) makeAlertMessage(content string) string {
+// MakeAlertMessage creates the tag portion of the slack alert
+func (s *SlackAlert) MakeAlertMessage(content string) string {
 	var userTags string
 
 	for _, u := range s.users {
-		userTags += fmt.Sprintf("%v", u)
+		userTags += fmt.Sprintf("@%v", u)
 	}
 
-	return fmt.Sprintf("%v \n %v", userTags, content)
+	return fmt.Sprintf("%v\n\n%v", userTags, content)
 }
 
 func (s *SlackAlert) sendMessage(message string) error {
 	// iterate through each channel and post message
-	channelMessage := s.makeAlertMessage(message)
+	channelMessage := s.MakeAlertMessage(message)
 	slackParams := slack.NewPostMessageParameters()
 	for _, c := range s.channels {
 		if _, _, err := s.api.PostMessage(c, channelMessage, slackParams); err != nil {
