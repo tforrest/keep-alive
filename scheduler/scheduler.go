@@ -73,7 +73,6 @@ func (s *SlackAlert) sendMessage(message string) error {
 // SendSuccess lets slack know of a success
 func (s *SlackAlert) SendSuccess(serviceName string) error {
 	message := fmt.Sprintf("Service: %v is up and running!", serviceName)
-
 	if err := s.sendMessage(message); err != nil {
 		return err
 	}
