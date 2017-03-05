@@ -18,8 +18,8 @@ type Job struct {
 }
 
 type alert interface {
-	sendSuccess(string) error
-	sendFailure(string) error
+	SendSuccess(string) error
+	SendFailure(string) error
 }
 
 // SlackAlert sends alerts via the slack api
@@ -27,6 +27,24 @@ type SlackAlert struct {
 	users    []string
 	channels []string
 	api      *slack.Client
+}
+
+// NewSlackAlert returns a new slack alert struct with the proper fields
+func NewSlackAlert(users []string, channels []string, apikey string) (*SlackAlert, error) {
+
+	api := slack.New(apikey)
+
+	if _, err := api.AuthTest(); err != nil {
+		return nil, err
+	}
+
+	slackAlert := &SlackAlert{
+		users:    users,
+		channels: channels,
+		api:      api,
+	}
+
+	return slackAlert, nil
 }
 
 // SendSuccess lets slack know of a success
