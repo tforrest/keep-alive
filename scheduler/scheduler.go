@@ -33,7 +33,3 @@ type twilioAlert struct {
 	numbers []string
 	apiKey  string
 }
-
-type emailAlert struct {
-	emailAddress string
-}
