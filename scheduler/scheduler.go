@@ -1,6 +1,7 @@
 package scheduler
 
 import (
+	"github.com/nlopes/slack"
 	"net/url"
 )
 
@@ -23,10 +24,9 @@ type alert interface {
 
 // SlackAlert sends alerts via the slack api
 type SlackAlert struct {
-	userName string
-	channel  string
-	mentions []string
-	apiKey   string
+	users    []string
+	channels []string
+	api      *slack.Client
 }
 
 // SendSuccess lets slack know of a success
