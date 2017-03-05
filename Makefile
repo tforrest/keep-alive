@@ -3,3 +3,5 @@ build-docker:
 	docker build .
 build-go:
 	go build
+test:
+	go test ./...
