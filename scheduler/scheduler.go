@@ -1,6 +1,7 @@
 package scheduler
 
 import (
+	"fmt"
 	"github.com/nlopes/slack"
 	"net/url"
 )
@@ -45,6 +46,16 @@ func NewSlackAlert(users []string, channels []string, apikey string) (*SlackAler
 	}
 
 	return slackAlert, nil
+}
+
+func (s *SlackAlert) makeAlertMessage(content string) string {
+	var userTags string
+
+	for u := range s.users {
+		userTags += fmt.Sprintf("%v", u)
+	}
+
+	return fmt.Sprintf("%v \n %v", userTags, content)
 }
 
 // SendSuccess lets slack know of a success
