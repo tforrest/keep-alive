@@ -32,30 +32,24 @@ type SlackAlert struct {
 
 // NewSlackAlert returns a new slack alert struct with the proper fields
 func NewSlackAlert(users []string, channels []string, apikey string) (*SlackAlert, error) {
-
 	api := slack.New(apikey)
-
 	if _, err := api.AuthTest(); err != nil {
 		return nil, err
 	}
-
 	slackAlert := &SlackAlert{
 		users:    users,
 		channels: channels,
 		api:      api,
 	}
-
 	return slackAlert, nil
 }
 
 // MakeAlertMessage creates the tag portion of the slack alert
 func (s *SlackAlert) MakeAlertMessage(content string) string {
 	var userTags string
-
 	for _, u := range s.users {
 		userTags += fmt.Sprintf("@%v", u)
 	}
-
 	return fmt.Sprintf("%v\n\n%v", userTags, content)
 }
 
