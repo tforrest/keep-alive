@@ -46,7 +46,7 @@ type TwilioAlert struct {
 	apiKey  string
 }
 
-// SendSuccess lets twilio know of success
+// SendSuccess lets twilio know of a success
 func (t *TwilioAlert) SendSuccess(message string) error {
 	return nil
 }
