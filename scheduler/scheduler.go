@@ -51,20 +51,32 @@ func NewSlackAlert(users []string, channels []string, apikey string) (*SlackAler
 func (s *SlackAlert) makeAlertMessage(content string) string {
 	var userTags string
 
-	for u := range s.users {
+	for _, u := range s.users {
 		userTags += fmt.Sprintf("%v", u)
 	}
 
 	return fmt.Sprintf("%v \n %v", userTags, content)
 }
 
+func (s *SlackAlert) sendMessage(message string) error {
+	// iterate through each channel and post message
+	channelMessage := s.makeAlertMessage(message)
+	slackParams := slack.NewPostMessageParameters()
+	for _, c := range s.channels {
+		if _, _, err := s.api.PostMessage(c, channelMessage, slackParams); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // SendSuccess lets slack know of a success
-func (s *SlackAlert) SendSuccess(message string) error {
+func (s *SlackAlert) SendSuccess(serviceName string) error {
 	return nil
 }
 
 // SendFailure lets slack know of a failure
-func (s *SlackAlert) SendFailure(message string) error {
+func (s *SlackAlert) SendFailure(seviceName string, failureReasion string) error {
 	return nil
 }
 
