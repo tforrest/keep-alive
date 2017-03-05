@@ -17,19 +17,41 @@ type Job struct {
 }
 
 type alert interface {
-	sendSuccess() error
-	sendFailure() error
+	sendSuccess(string) error
+	sendFailure(string) error
 }
 
-type slackAlert struct {
+// SlackAlert sends alerts via the slack api
+type SlackAlert struct {
 	userName string
 	channel  string
 	mentions []string
 	apiKey   string
 }
 
-type twilioAlert struct {
+// SendSuccess lets slack know of a success
+func (s *SlackAlert) SendSuccess(message string) error {
+	return nil
+}
+
+// SendFailure lets slack know of a failure
+func (s *SlackAlert) SendFailure(message string) error {
+	return nil
+}
+
+// TwilioAlert sends alerts via the twilio api
+type TwilioAlert struct {
 	sid     string
 	numbers []string
 	apiKey  string
+}
+
+// SendSuccess lets twilio know of success
+func (t *TwilioAlert) SendSuccess(message string) error {
+	return nil
+}
+
+// SendFailure lets twilio know of a failure
+func (t *TwilioAlert) SendFailure(message string) error {
+	return nil
 }
