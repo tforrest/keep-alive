@@ -3,6 +3,7 @@ package scheduler
 import (
 	"fmt"
 	"net/url"
+	"time"
 
 	"github.com/nlopes/slack"
 	"github.com/sfreiberg/gotwilio"
@@ -13,10 +14,27 @@ type Scheduler struct {
 	jobs []Job
 }
 
+// AddJob adds an additional job to the scheduler to check
+func (s *Scheduler) AddJob(job Job) error {
+	return nil
+}
+
+// RemoveJob removes a current job in the scheduler or returns an error if not present
+func (s *Scheduler) RemoveJob(jobName string) error {
+	return nil
+}
+
+// Start starts the scheduler and sends requests based on each jobs' interval
+func (s *Scheduler) Start() error {
+	return nil
+}
+
 // Job holds the information needed to keep an link alive and alert
 type Job struct {
-	Alerts []alert
-	URL    url.URL
+	JobName  string
+	Interval time.Time
+	Alerts   []alert
+	URL      url.URL
 }
 
 type alert interface {
