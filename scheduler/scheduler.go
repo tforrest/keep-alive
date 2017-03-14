@@ -32,7 +32,7 @@ type SlackAlert struct {
 }
 
 // NewSlackAlert returns a new slack alert struct with the proper fields
-func NewSlackAlert(users []string, channels []string, apikey string) (*SlackAlert, error) {
+func NewSlackAlert(users, channels []string, apikey string) (*SlackAlert, error) {
 	api := slack.New(apikey)
 	if _, err := api.AuthTest(); err != nil {
 		return nil, err
@@ -76,7 +76,7 @@ func (s *SlackAlert) SendSuccess(serviceName string) error {
 }
 
 // SendFailure lets slack know of a failure
-func (s *SlackAlert) SendFailure(serviceName string, failureReason string) error {
+func (s *SlackAlert) SendFailure(serviceName, failureReason string) error {
 	message := fmt.Sprintf("Service: %v is down! Error Message: %v", serviceName, failureReason)
 	if err := s.sendMessage(message); err != nil {
 		return err
@@ -92,7 +92,7 @@ type TwilioAlert struct {
 }
 
 // NewTwilioAlert create a TwilioAlert struct with the proper fields
-func NewTwilioAlert(sid string, sender string, numbers []string, apikey string) *TwilioAlert {
+func NewTwilioAlert(sid, sender string, numbers []string, apikey string) *TwilioAlert {
 	api := gotwilio.NewTwilioClient(sid, apikey)
 
 	twilioAlert := &TwilioAlert{
@@ -104,12 +104,24 @@ func NewTwilioAlert(sid string, sender string, numbers []string, apikey string) 
 	return twilioAlert
 }
 
-// SendSuccess lets twilio know of a success
-func (t *TwilioAlert) SendSuccess(message string) error {
+func (t *TwilioAlert) sendTextMessages(message string) error {
+	for _, number := range t.numbers {
+		_, _, err := t.twilio.SendSMS(t.sender, number, message, "", "")
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
+// SendSuccess lets twilio know of a success
+func (t *TwilioAlert) SendSuccess(serviceName string) error {
+	message := fmt.Sprintf("Service: %v is up!", serviceName)
+	return t.sendTextMessages(message)
+}
+
 // SendFailure lets twilio know of a failure
-func (t *TwilioAlert) SendFailure(message string) error {
-	return nil
+func (t *TwilioAlert) SendFailure(serviceName, failureReason string) error {
+	message := fmt.Sprintf("Service: %v is down! Error message: %v", serviceName, failureReason)
+	return t.sendTextMessages(message)
 }
