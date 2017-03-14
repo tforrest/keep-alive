@@ -46,7 +46,7 @@ type alert interface {
 type SlackAlert struct {
 	users    []string
 	channels []string
-	api      *slack.Client
+	slackAPI *slack.Client
 }
 
 // NewSlackAlert returns a new slack alert struct with the proper fields
@@ -58,7 +58,7 @@ func NewSlackAlert(users, channels []string, apikey string) (*SlackAlert, error)
 	slackAlert := &SlackAlert{
 		users:    users,
 		channels: channels,
-		api:      api,
+		slackAPI: api,
 	}
 	return slackAlert, nil
 }
@@ -77,7 +77,7 @@ func (s *SlackAlert) sendMessage(message string) error {
 	channelMessage := s.MakeAlertMessage(message)
 	slackParams := slack.NewPostMessageParameters()
 	for _, c := range s.channels {
-		if _, _, err := s.api.PostMessage(c, channelMessage, slackParams); err != nil {
+		if _, _, err := s.slackAPI.PostMessage(c, channelMessage, slackParams); err != nil {
 			return err
 		}
 	}
@@ -104,9 +104,9 @@ func (s *SlackAlert) SendFailure(serviceName, failureReason string) error {
 
 // TwilioAlert sends alerts via the twilio api
 type TwilioAlert struct {
-	sender  string
-	numbers []string
-	twilio  *gotwilio.Twilio
+	sender    string
+	numbers   []string
+	twilioAPI *gotwilio.Twilio
 }
 
 // NewTwilioAlert create a TwilioAlert struct with the proper fields
@@ -114,9 +114,9 @@ func NewTwilioAlert(sid, sender string, numbers []string, apikey string) *Twilio
 	api := gotwilio.NewTwilioClient(sid, apikey)
 
 	twilioAlert := &TwilioAlert{
-		sender:  sender,
-		numbers: numbers,
-		twilio:  api,
+		sender:    sender,
+		numbers:   numbers,
+		twilioAPI: api,
 	}
 
 	return twilioAlert
@@ -124,7 +124,7 @@ func NewTwilioAlert(sid, sender string, numbers []string, apikey string) *Twilio
 
 func (t *TwilioAlert) sendTextMessages(message string) error {
 	for _, number := range t.numbers {
-		_, _, err := t.twilio.SendSMS(t.sender, number, message, "", "")
+		_, _, err := t.twilioAPI.SendSMS(t.sender, number, message, "", "")
 		if err != nil {
 			return err
 		}
