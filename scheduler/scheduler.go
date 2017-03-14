@@ -15,9 +15,8 @@ type Scheduler struct {
 
 // Job holds the information needed to keep an link alive and alert
 type Job struct {
-	jobType string
-	alert   interface{}
-	url     url.URL
+	Alerts []alert
+	URL    url.URL
 }
 
 type alert interface {
